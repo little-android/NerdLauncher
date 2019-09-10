@@ -4,14 +4,18 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.Icon;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -66,11 +70,15 @@ public class NerdLauncherFragment extends Fragment {
     private class ActivityHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener{
         private ResolveInfo mResolveInfo;
+        private ImageView mIconImageView;
+        private ConstraintLayout mConstraintLayout;
         private TextView mNameTextView;
 
         public ActivityHolder(View itemView) {
             super(itemView);
-            mNameTextView = (TextView) itemView;
+            mNameTextView = (TextView) itemView.findViewById(R.id.activity_name);
+            mIconImageView = (ImageView) itemView.findViewById(R.id.activity_icon);
+            mConstraintLayout = (ConstraintLayout) itemView.findViewById(R.id.activity_frame);
         }
 
         public void bindActivity(ResolveInfo resolveInfo) {
@@ -78,7 +86,10 @@ public class NerdLauncherFragment extends Fragment {
             PackageManager pm = getActivity().getPackageManager();
             String appName = mResolveInfo.loadLabel(pm).toString();
             mNameTextView.setText(appName);
-            mNameTextView.setOnClickListener(this);
+
+            Drawable appIcon = mResolveInfo.loadIcon(pm);
+            mIconImageView.setImageDrawable(appIcon);
+            mConstraintLayout.setOnClickListener(this);
         }
 
         // 添加点击响应事件
@@ -105,7 +116,7 @@ public class NerdLauncherFragment extends Fragment {
         public ActivityHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
             View view = layoutInflater
-                    .inflate(android.R.layout.simple_list_item_1, parent, false);
+                    .inflate(R.layout.activity_item, parent, false);
             return new ActivityHolder(view);
         }
 
